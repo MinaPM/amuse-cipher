@@ -37,6 +37,22 @@ python -m unittest discover tests
 
 This will run both the unit tests for the core encryption/decryption algorithms and the integration tests for the CLI script.
 
+## Usage
+
+To run the project on a file, use the `main.py` script and pass the input file as an argument:
+
+```bash
+python main.py <input_file>
+```
+
+For example, to run it on the provided `test.txt` file:
+
+```bash
+python main.py test.txt
+```
+
+This will encrypt the file into a `.enc` file (which contains the Bloom Filter representation) and then decrypt it, showing a progress bar and outputting a `.decrypted` file.
+
 ## Algorithm
 
 ### Algorithm 1: Encrypt a message/file into a Bloom Filter

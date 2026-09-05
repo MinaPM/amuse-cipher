@@ -68,6 +68,21 @@ class TestAlgorithms(unittest.TestCase):
             bf, hashlib.md5(), len(self.message), self.postamble)
         self.assertIsNone(decrypted)
 
+    def test_corrupted_bloom_filter(self):
+        bf = encrypt_file(self.message, hashlib.sha256(),
+                          self.prob, self.postamble)
+        
+        # Corrupt the Bloom Filter data by zeroing out part of the underlying array
+        if hasattr(bf, 'backend') and hasattr(bf.backend, 'array_'):
+            if len(bf.backend.array_) > 0:
+                bf.backend.array_[0] = 0
+                
+        decrypted = decrypt_file(bf, hashlib.sha256(),
+                                 len(self.message), self.postamble)
+        
+        # Decryption should fail to find the correct path and return None
+        self.assertIsNone(decrypted)
+
 
 if __name__ == "__main__":
     unittest.main()
