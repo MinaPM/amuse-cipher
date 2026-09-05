@@ -57,43 +57,43 @@ This will encrypt the file into a `.enc` file (which contains the Bloom Filter r
 
 ### Algorithm 1: Encrypt a message/file into a Bloom Filter
 
----
-
-**1** &nbsp;**Function** `EncryptFile`($file, H$)  
-**2** &nbsp;$size \leftarrow \mathbf{len}(file)$  
-**3** &nbsp;$BF \leftarrow \mathbf{BloomFilter}(size, prob)$  
-**4** &nbsp;**for** $i \leftarrow 0$ **to** $size - 1$ **do**  
-**5** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$H\text{.update}(file[i])$  
-**6** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$BF\text{.insert}(H\text{.digest}())$  
-**7** &nbsp;**foreach** $\phi \in postamble$ **do**  
-**8** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$H\text{.update}(\phi)$,  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$BF\text{.insert}(H\text{.digest}())$  
-**9** &nbsp;**return** $BF$;  
-
----
+$$
+\begin{array}{ll}
+\textbf{1} & \textbf{Function } \text{EncryptFile}(file, H) \\
+\textbf{2} & \quad size \leftarrow \textbf{len}(file) \\
+\textbf{3} & \quad BF \leftarrow \text{BloomFilter}(size, prob) \\
+\textbf{4} & \quad \textbf{for } i \leftarrow 0 \textbf{ to } size - 1 \textbf{ do} \\
+\textbf{5} & \quad \quad H\text{.update}(file[i]) \\
+\textbf{6} & \quad \quad BF\text{.insert}(H\text{.digest}()) \\
+\textbf{7} & \quad \textbf{foreach } \phi \in postamble \textbf{ do} \\
+\textbf{8} & \quad \quad H\text{.update}(\phi), \\
+           & \quad \quad BF\text{.insert}(H\text{.digest}()) \\
+\textbf{9} & \quad \textbf{return } BF;
+\end{array}
+$$
 
 ### Algorithm 2: Decrypt a message/file from a Bloom Filter
 
----
-
-**1** &nbsp;**Function** `DecryptFile`($BF, H, size, postamble$)  
-**2** &nbsp;$P \leftarrow \bot, Q_{bfs} \leftarrow \bot \quad \triangleright$ Start from an empty prefix and creating a queue  
-**3** &nbsp;$Q_{bfs}\text{.append}(\langle H, P \rangle) \quad \triangleright$ Initialize BFS queue with the empty string  
-**4** &nbsp;**while** $Q_{bfs} \neq \bot$ **do**  
-**5** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$\langle H, P \rangle \leftarrow Q_{bfs}\text{.pop} \quad \triangleright$ Dequeue a pair of hash function & a prefix  
-**6** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**if** $\mathbf{len}(P) < size$ **then**  
-**7** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**foreach** $c \in \sigma$ **do**  
-**8** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$P_{opt} \leftarrow P + c, H_{opt} \leftarrow H\text{.copy}(), H_{opt}\text{.update}(c)$  
-**9** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**if** $BF\text{.check}(H_{opt}\text{.digest}())$ **then**  
-**10** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$Q_{bfs}\text{.append}(\langle H_{opt}, P_{opt} \rangle) \quad \triangleright$ Enqueue candidate pair  
-**11** **else**  
-**12** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$success \leftarrow \mathbf{true}$  
-**13** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**foreach** $\phi \in postamble$ **do**  
-**14** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$H\text{.update}(\phi)$  
-**15** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**if not** $BF\text{.check}(H\text{.digest}())$ **then**  
-**16** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$success \leftarrow \mathbf{false}$ **& break** $\quad \triangleright$ False positive full message  
-**17** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**if** $success = \mathbf{true}$ **then**  
-**18** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**return** $P$  
-**19** **return** $\bot$;  
-
----
+$$
+\begin{array}{ll}
+\textbf{1} & \textbf{Function } \text{DecryptFile}(BF, H, size, postamble) \\
+\textbf{2} & \quad P \leftarrow \bot, Q_{bfs} \leftarrow \bot \quad \triangleright \text{Start from an empty prefix and creating a queue} \\
+\textbf{3} & \quad Q_{bfs}\text{.append}(\langle H, P \rangle) \quad \triangleright \text{Initialize BFS queue with the empty string} \\
+\textbf{4} & \quad \textbf{while } Q_{bfs} \neq \bot \textbf{ do} \\
+\textbf{5} & \quad \quad \langle H, P \rangle \leftarrow Q_{bfs}\text{.pop}() \quad \triangleright \text{Dequeue a pair of hash function \& a prefix} \\
+\textbf{6} & \quad \quad \textbf{if } \textbf{len}(P) < size \textbf{ then} \\
+\textbf{7} & \quad \quad \quad \textbf{foreach } c \in \sigma \textbf{ do} \\
+\textbf{8} & \quad \quad \quad \quad P_{opt} \leftarrow P + c, H_{opt} \leftarrow H\text{.copy}(), H_{opt}\text{.update}(c) \\
+\textbf{9} & \quad \quad \quad \textbf{if } BF\text{.check}(H_{opt}\text{.digest}()) \textbf{ then} \\
+\textbf{10} & \quad \quad \quad \quad Q_{bfs}\text{.append}(\langle H_{opt}, P_{opt} \rangle) \quad \triangleright \text{Enqueue candidate pair} \\
+\textbf{11} & \quad \textbf{else} \\
+\textbf{12} & \quad \quad success \leftarrow \textbf{true} \\
+\textbf{13} & \quad \quad \textbf{foreach } \phi \in postamble \textbf{ do} \\
+\textbf{14} & \quad \quad \quad H\text{.update}(\phi) \\
+\textbf{15} & \quad \quad \quad \textbf{if not } BF\text{.check}(H\text{.digest}()) \textbf{ then} \\
+\textbf{16} & \quad \quad \quad \quad success \leftarrow \textbf{false} \textbf{ \& break} \quad \triangleright \text{False positive full message} \\
+\textbf{17} & \quad \quad \textbf{if } success = \textbf{true} \textbf{ then} \\
+\textbf{18} & \quad \quad \quad \textbf{return } P \\
+\textbf{19} & \quad \textbf{return } \bot;
+\end{array}
+$$
