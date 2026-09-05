@@ -25,6 +25,18 @@ This project requires Python and uses the `bloom-filter` package. All dependenci
    pip install -r requirements.txt
    ```
 
+## Testing
+
+The project includes a full test suite built with Python's standard `unittest` framework, meaning no additional dependencies are required to run the tests.
+
+To run the entire test suite, ensure your virtual environment is activated and execute:
+
+```bash
+python -m unittest discover tests
+```
+
+This will run both the unit tests for the core encryption/decryption algorithms and the integration tests for the CLI script.
+
 ## Algorithm
 
 ### Algorithm 1: Encrypt a message/file into a Bloom Filter
